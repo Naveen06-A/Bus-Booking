@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Registration Form</title>
+    <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+        <script src="busReg.js"></script>
+<body>
+    <header>
+        <h1 style="text-align: center;">Bus Registration</h1>  <!-- Added style="text-align: center;" -->
+    </header>
+    <div class="container">
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="regNumber">Bus Number:</label>
+                <i class="fas fa-bus"></i>
+                <input type="text" id="regNumber" name="regNumber" 
+                    pattern="[A-Za-z]{2}\d{2}[A-Za-z]{2}\d{4}" 
+                    title="Bus Number must be in the format 'AA11AA1111'" 
+                    required>
+
+                <span id="regNumberError" class="error-message"></span>
+            </div>
+            
+            <div class="form-group">
+                <label for="busName">Bus Name:</label>
+                <i class="fas fa-bus-alt"></i>
+                <input type="text" id="busName" name="busName" required>
+                <span id="busNameError" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="dateFrom">Date Range From:</label>
+                <i class="fas fa-calendar-alt"></i>
+                <input type="date" id="dateFrom" name="dateFrom" min="#" required>
+                <span id="dateFromError" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="dateTo">Date Range To:</label>
+                <i class="fas fa-calendar-alt"></i>
+                <input type="date" id="dateTo" name="dateTo" min="#" required>
+                <span id="dateToError" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="arrival">Arrival:</label>
+                <i class="fas fa-map-marker-alt"></i>
+                <select id="arrival" name="arrival" required>
+                    <option value="">Select Arrival</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="departure">Departure:</label>
+                <i class="fas fa-map-marker-alt"></i>
+                <select id="departure" name="departure" required>
+                    <option value="">Select Departure</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="seats">Number of Seats:</label>
+                <i class="fas fa-chair"></i>
+                <input type="number" id="seats" name="seats" min="1" required>
+                <span id="seatsError" class="error-message"></span>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <i class="fas fa-money-bill-wave"></i>
+                <input type="numeric" id="amount" name="amount" min="1" step="any" required>
+                <span id="amountError" class="error-message"></span>
+            </div>
+            <input type="submit" value="Register">
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2024 Bus Booking</p>
+    </footer>
+    <script src="busReg.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit-id.js" crossorigin="anonymous"></script>
+</body>
+</html>

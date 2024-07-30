@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="book.css">
+    
+<body>
+    <div class="container">
+        <h2>Bus Booking</h2>
+        <form id="booking-form">
+            <div class="form-group">
+                <label for="date"> Date</label>
+                <i class="fas fa-calendar-alt"></i>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="arrival">Arrival</label>
+                <i class="fas fa-map-marker-alt"></i>
+                <input type="text" id="arrival" name="arrival" required>
+            </div>
+            <div class="form-group">
+                <label for="departure">Departure</label>
+                <i class="fas fa-map-marker-alt"></i>
+                <input type="text" id="departure" name="departure" required>
+            </div>
+            <div class="form-group">
+                <label for="seats">Seats </label>
+                <i class="fas fa-chair"></i>
+                <input type="number" id="seats" name="seats" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="bus"> Bus</label>
+                <i class="fas fa-bus"></i>
+                <select id="bus" name="bus" required>
+                    <option value=""> Bus</option>
+                    <option value="Bus1" data-seats="15">Bus1 (15 seats)</option>
+                    <option value="Bus2" data-seats="10">Bus2 (10 seats)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="seats-container" id="seats-container"></div>
+            </div>
+            <div class="total-amount" id="total-amount"></div>
+            <button type="submit">Book Now</button>
+        </form>
+    </div>
+    <script>
+         const dateInput = document.getElementById('date');
+        const dateError = document.getElementById('dateError');
+        const busSelect = document.getElementById('bus');
+        const seatsContainer = document.getElementById('seats-container');
+        const totalAmount = document.getElementById('total-amount');
+        const maxSeatsInput = document.getElementById('seats');
+        const seatCost = 100;
+
+        // Function to set the min attribute for the date input
+        function setMinDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            const minDate = `${year}-${month}-${day}`;
+            dateInput.setAttribute('min', minDate);
+        }
+
+        // Function to validate the date
+        function validateDate() {
+            const today = new Date();
+            const selectedDate = new Date(dateInput.value);
+
+            if (selectedDate < today) {
+                dateError.textContent = "Please select a date from today onwards.";
+                return false;
+            } else {
+                dateError.textContent = "";
+                return true;
+            }
+        }
+
+        // Add event listener to the date input for real-time validation
+        dateInput.addEventListener("input", function() {
+            validateDate();
+        });
+
+        busSelect.addEventListener('change', function () {
+            const selectedBus = busSelect.options[busSelect.selectedIndex];
+            const availableSeats = selectedBus.getAttribute('data-seats');
+            generateSeatCheckboxes(availableSeats);
+        });
+
+        function generateSeatCheckboxes(availableSeats) {
+            seatsContainer.innerHTML = '';
+            for (let i = 1; i <= availableSeats; i++) {
+                const label = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = i;
+                checkbox.name = 'seat';
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(`Seat ${i}`));
+                seatsContainer.appendChild(label);
+            }
+        }
+
+        seatsContainer.addEventListener('change', function () {
+            const selectedSeats = document.querySelectorAll('input[name="seat"]:checked');
+            const maxSeats = parseInt(maxSeatsInput.value, 10);
+
+            if (selectedSeats.length > maxSeats) {
+                selectedSeats[maxSeats].checked = false;
+                alert(`You can only select up to ${maxSeats} seats.`);
+            }
+
+            const totalSelectedSeats = document.querySelectorAll('input[name="seat"]:checked').length;
+            totalAmount.textContent = `Total Amount: $${totalSelectedSeats * seatCost}`;
+
+            if (totalSelectedSeats >= maxSeats) {
+                document.querySelectorAll('input[name="seat"]:not(:checked)').forEach(checkbox => {
+                    checkbox.disabled = true;
+                });
+            } else {
+                document.querySelectorAll('input[name="seat"]').forEach(checkbox => {
+                    checkbox.disabled = false;
+                });
+            }
+        });
+
+        document.getElementById('booking-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const selectedSeats = document.querySelectorAll('input[name="seat"]:checked').length;
+            if (selectedSeats === 0) {
+                alert('Please select at least one seat.');
+                return;
+            }
+
+            const formData = new FormData(this);
+            fetch('/api/book', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        // Set the min date when the page loads
+        window.onload = setMinDate;
+    </script>
+</body>
+</html>

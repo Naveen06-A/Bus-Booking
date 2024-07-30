@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Booking - Login/Signup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-block-size: 100vh;
+            margin: 0;
+            background: url('bus3.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        .container {
+            background-color: #dbe2e4;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            inline-size: 100%;
+            max-inline-size: 400px;
+            margin: 20px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            margin-block-end: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-block-end: 15px;
+            position: relative;
+        }
+
+        .form-group i {
+            position: absolute;
+            inset-block-start: 50%;
+            inset-inline-start: 10px;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        label {
+            display: block;
+            margin-block-end: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"] {
+            inline-size: 100%;
+            padding: 10px 10px 10px 30px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="tel"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        button {
+            inline-size: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: rgb(211, 214, 218);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .link {
+            text-align: center;
+            margin-block-start: 10px;
+        }
+
+        .link a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .link a:hover {
+            color: #4CAF50;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-block-start: 5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes buttonHover {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="login-form">
+            <h2>Login</h2>
+            <form action="/auth" method="post">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="login-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+                <div class="link">
+                    <a href="#" onclick="showSignupForm()">Don't have an account? Signup</a>
+                </div>
+            </form>
+        </div>
+        <div id="signup-form" style="display: none;">
+            <h2>Sign Up</h2>
+            <form>
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="signup-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="signup-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-phone">Phone Number</label>
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="signup-phone" name="phone" required>
+                    <span id="phoneError" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="signup-password" name="password" required>
+                    <span id="passwordError" class="error-message"></span>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-password">Confirm Password</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="signup-confirm-password" name="confirm-password" required>
+                    <span id="passwordMatchError" class="error-message"></span>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const phoneInput = document.getElementById("signup-phone");
+        const phoneError = document.getElementById("phoneError");
+        const passwordInput = document.getElementById("signup-password");
+        const passwordError = document.getElementById("passwordError");
+        const confirmPasswordInput = document.getElementById("signup-confirm-password");
+        const passwordMatchError = document.getElementById("passwordMatchError");
+
+        // Function to validate phone number
+        function validatePhoneNumber() {
+            const phoneNumber = phoneInput.value;
+            const phoneNumberPattern = /^[0-9]{10}$/;
+
+            if (!phoneNumberPattern.test(phoneNumber)) {
+                phoneError.textContent = "Please enter a valid 10-digit phone number.";
+                return false;
+            } else {
+                phoneError.textContent = "";
+                return true;
+            }
+        }
+
+        // Function to validate password
+        function validatePassword() {
+            const password = passwordInput.value;
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+            if (!passwordPattern.test(password)) {
+                passwordError.textContent = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one numeric digit, and one special character.";
+                return false;
+            } else {
+                passwordError.textContent = "";
+                return true;
+            }
+        }
+
+        // Function to validate password match
+        function validatePasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (password !== confirmPassword) {
+                passwordMatchError.textContent = "Passwords do not match.";
+                return false;
+            } else {
+                passwordMatchError.textContent = "";
+                return true;
+            }
+        }
+
+        // Add event listener to the form
+        const signupForm = document.querySelector("#signup-form form");
+        signupForm.addEventListener("submit", function(event) {
+            if (!validatePhoneNumber() || !validatePassword() || !validatePasswordMatch()) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+
+        // Add event listeners to the phone and password inputs for real-time validation
+        phoneInput.addEventListener("input", function() {
+            validatePhoneNumber();
+        });
+
+        passwordInput.addEventListener("input", function() {
+            validatePassword();
+            validatePasswordMatch();
+        });
+        confirmPasswordInput.addEventListener("input", function() {
+            validatePasswordMatch();
+        });
+
+        function showSignupForm() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'block';
+        }
+
+        // Add event listeners for form submissions (you'll need to handle the actual verification logic here)
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Get username and password from the login form
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            // ... (Implement your verification logic here)
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Get username, email, phone number, and password from the signup form
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const phone = document.getElementById('signup-phone').value;
+            const password = document.getElementById('signup-password').value;
+            // ... (Implement your verification logic here)
+        });
+
+        // Allow only numeric input in the phone number field
+        phoneInput.addEventListener('keypress', function(event) {
+            const key = event.key;
+            if (!/[0-9]/.test(key)) {
+                event.preventDefault();
+            }
+        });
+
+        // Restrict the length of the phone number to 10 digits
+        phoneInput.addEventListener('input', function() {
+            if (phoneInput.value.length > 10) {
+                phoneInput.value = phoneInput.value.slice(0, 10);
+            }
+        });
+    </script>
+</body>
+</html>
